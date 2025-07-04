@@ -21,9 +21,11 @@
 package hyperpage
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
 	"fmt"
+	"io"
 
 	_ "modernc.org/sqlite"
 )
@@ -42,7 +44,7 @@ var (
 type Page interface {
 	Path() string
 	MimeType() string
-	Content() []byte
+	Content() io.Reader
 }
 
 type sqlitePage struct {
@@ -69,8 +71,8 @@ func (p *sqlitePage) MimeType() string {
 	return p.mimeType
 }
 
-func (p *sqlitePage) Content() []byte {
-	return p.content
+func (p *sqlitePage) Content() io.Reader {
+	return bytes.NewReader(p.content)
 }
 
 // OpenReader opens a reader for the hyperpage database at the specified path
@@ -126,7 +128,9 @@ func (w *Writer) Store(ctx context.Context, page Page) error {
 	if page == nil {
 		return fmt.Errorf("hyperpage.Store: cannot store nil page")
 	}
-	_, err := w.db.ExecContext(ctx, insertPageQuery, page.Path(), page.MimeType(), page.Content())
+	buf := bytes.NewBuffer(nil)
+	_, _ = io.Copy(buf, page.Content())
+	_, err := w.db.ExecContext(ctx, insertPageQuery, page.Path(), page.MimeType(), buf.Bytes())
 	if err != nil {
 		return fmt.Errorf("hyperpage.Store: %v", err)
 	}
