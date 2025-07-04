@@ -21,8 +21,10 @@
 package hyperpage
 
 import (
+	"bytes"
 	"context"
 	"database/sql"
+	"io"
 	"regexp"
 	"testing"
 	"time"
@@ -133,5 +135,7 @@ func TestLoadPage(t *testing.T) {
 	assert.NotNil(t, page)
 	assert.Equal(t, "/test/path", page.Path())
 	assert.Equal(t, "text/plain", page.MimeType())
-	assert.Equal(t, []byte("test content"), page.Content())
+	buf := bytes.NewBuffer(nil)
+	_, _ = io.Copy(buf, page.Content())
+	assert.Equal(t, []byte("test content"), buf.Bytes())
 }

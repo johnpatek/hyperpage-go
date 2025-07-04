@@ -23,25 +23,28 @@ package main
 
 import (
 	"context"
+	"io"
+	"os"
+	"strings"
 
 	"github.com/johnpatek/hyperpage-go"
 )
 
-type staticPage struct {
+type simplePage struct {
 	path     string
 	mimeType string
-	content  []byte
+	content  io.Reader
 }
 
-func (p *staticPage) Path() string {
+func (p *simplePage) Path() string {
 	return p.path
 }
 
-func (p *staticPage) MimeType() string {
+func (p *simplePage) MimeType() string {
 	return p.mimeType
 }
 
-func (p *staticPage) Content() []byte {
+func (p *simplePage) Content() io.Reader {
 	return p.content
 }
 
@@ -51,10 +54,10 @@ func main() {
 	defer writer.Close()
 
 	// Store a page
-	_ = writer.Store(context.Background(), &staticPage{
+	_ = writer.Store(context.Background(), &simplePage{
 		path:     "/index.html",
 		mimeType: "text/html",
-		content:  []byte("<html><body><h1>Hello, World!</h1></body></html>"),
+		content:  strings.NewReader("<html><body><h1>Hello, World!</h1></body></html>"),
 	})
 
 	// Open the reader
@@ -66,7 +69,8 @@ func main() {
 	if page != nil {
 		println("Page Path:", page.Path())
 		println("Page MimeType:", page.MimeType())
-		println("Page Content:", string(page.Content()))
+		println("Page Content:")
+		io.Copy(os.Stdout, page.Content())
 	} else {
 		println("Error: page not found")
 	}
