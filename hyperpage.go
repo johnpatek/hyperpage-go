@@ -38,6 +38,7 @@ var (
 	selectPageQuery string = `SELECT mime_type, content FROM hyperpage WHERE path = ?;`
 )
 
+// Page represents a single page in the hyperpage database
 type Page interface {
 	Path() string
 	MimeType() string
@@ -50,10 +51,12 @@ type sqlitePage struct {
 	content  []byte
 }
 
+// Reader is used to load pages from the hyperpage database
 type Reader struct {
 	db *sql.DB
 }
 
+// Writer is used to store pages in the hyperpage database
 type Writer struct {
 	db *sql.DB
 }
@@ -70,6 +73,7 @@ func (p *sqlitePage) Content() []byte {
 	return p.content
 }
 
+// OpenReader opens a reader for the hyperpage database at the specified path
 func OpenReader(ctx context.Context, path string) (*Reader, error) {
 	db, err := sqlOpen(ctx, path, "")
 	if err != nil {
@@ -80,10 +84,12 @@ func OpenReader(ctx context.Context, path string) (*Reader, error) {
 	}, nil
 }
 
+// Close closes the database connection for the reader
 func (r *Reader) Close() {
 	_ = r.db.Close()
 }
 
+// Load retrieves a page from the hyperpage database by its path
 func (r *Reader) Load(ctx context.Context, path string) (Page, error) {
 	row := r.db.QueryRowContext(ctx, selectPageQuery, path)
 	var mimeType string
@@ -99,6 +105,7 @@ func (r *Reader) Load(ctx context.Context, path string) (Page, error) {
 	}, nil
 }
 
+// OpenWriter opens a writer for the hyperpage database at the specified path
 func OpenWriter(ctx context.Context, path string) (*Writer, error) {
 	db, err := sqlOpen(ctx, path, createTableQuery)
 	if err != nil {
@@ -109,10 +116,12 @@ func OpenWriter(ctx context.Context, path string) (*Writer, error) {
 	}, nil
 }
 
+// Close closes the database connection for the writer
 func (w *Writer) Close() {
 	_ = w.db.Close()
 }
 
+// Store saves a page to the hyperpage database
 func (w *Writer) Store(ctx context.Context, page Page) error {
 	if page == nil {
 		return fmt.Errorf("hyperpage.Store: cannot store nil page")
