@@ -31,7 +31,7 @@ test: unit cover
 .PHONY: unit
 unit:
 	@echo $(UNIT_TEST_HEADER)
-	go test -v -timeout 30s -coverprofile=coverage.out ./hyperpage
+	go test -v -timeout 30s -coverprofile=coverage.out .
 
 .PHONY: cover
 cover:
