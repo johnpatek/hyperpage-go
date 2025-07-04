@@ -48,7 +48,9 @@ func TestSqlOpen(t *testing.T) {
 	db, err = sqlOpen(context.Background(), ":memory:", "")
 	assert.NoError(t, err)
 	assert.NotNil(t, db)
-	defer db.Close()
+	defer func() {
+		_ = db.Close()
+	}()
 }
 
 func TestOpenReader(t *testing.T) {
@@ -83,8 +85,8 @@ func TestOpenWriter(t *testing.T) {
 
 func TestStorePage(t *testing.T) {
 	db, mock := newMock()
-	defer db.Close()
 	writer := &Writer{db: db}
+	defer writer.Close()
 
 	// Test storing a nil page
 	err := writer.Store(context.Background(), nil)
@@ -112,8 +114,8 @@ func TestStorePage(t *testing.T) {
 
 func TestLoadPage(t *testing.T) {
 	db, mock := newMock()
-	defer db.Close()
 	reader := &Reader{db: db}
+	defer reader.Close()
 
 	// Test loading a page with a timeout
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(0))

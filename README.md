@@ -1,9 +1,9 @@
 # hyperpage-go
 
 ![status](https://github.com/johnpatek/hyperpage-go/actions/workflows/pipeline.yml/badge.svg)
-[![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](http://pkg.go.dev/github.com/johpatek/hyperpage-go)
-[![codecov](https://codecov.io/gh/johnpatek/hyperpage-go/branch/master/graph/badge.svg)](https://codecov.io/gh/johpatek/hyperpage-go)
-[![Go Report Card](https://goreportcard.com/badge/github.com/johpatek/hyperpage-go)](https://goreportcard.com/report/github.com/johpatek/hyperpage-go)
+[![GoDoc](https://godoc.org/github.com/golang/gddo?status.svg)](http://pkg.go.dev/github.com/johnpatek/hyperpage-go)
+[![codecov](https://codecov.io/gh/johnpatek/hyperpage-go/branch/master/graph/badge.svg)](https://codecov.io/gh/johnpatek/hyperpage-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/johnpatek/hyperpage-go)](https://goreportcard.com/report/github.com/johnpatek/hyperpage-go)
 
 A pure Go implementation of Maxtek's [hyperpage](https://github.com/maxtek6/hyperpage) 
 with full feature parity and interoperability.
