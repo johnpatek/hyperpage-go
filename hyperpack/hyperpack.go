@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"io"
 	"io/fs"
-	"net/http"
+	"mime"
 	"os"
 	"path/filepath"
 	"strings"
@@ -39,8 +39,11 @@ func newMappedPage(base, path string) (hyperpage.Page, error) {
 		return nil, err
 	}
 
-	webPath := "/" + strings.ReplaceAll(strings.TrimPrefix(path, base), string(os.PathSeparator), "/")
-	mime := http.DetectContentType(content)
+	webPath := strings.ReplaceAll(strings.TrimPrefix(path, base), string(os.PathSeparator), "/")
+	if !strings.HasPrefix(webPath, "/") {
+		webPath = "/" + webPath
+	}
+	mime := mime.TypeByExtension(filepath.Ext(webPath))
 
 	return &mappedPage{
 		path:     webPath,
