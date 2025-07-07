@@ -20,10 +20,11 @@
 
 UNIT_TEST_HEADER        = "****************************** UNIT TEST *******************************"
 LINT_CHECK_HEADER       = "***************************** LINT CHECK *******************************"
-CODE_COVERAGE_HEADER    = "**************************** CODE COVERAGE *****************************" 
+CODE_COVERAGE_HEADER    = "**************************** CODE COVERAGE *****************************"
+HYPERPACK_HEADER        = "****************************** HYPERPACK *******************************" 
 
 .PHONY: all
-all: lint test
+all: lint test build
 
 .PHONY: test
 test: unit cover
@@ -49,3 +50,11 @@ lint:
 .PHONY: clean
 clean:
 	rm -rf coverage.out
+
+.PHONY: build
+build: hyperpack
+
+.PHONY: hyperpack
+hyperpack:
+	@echo $(HYPERPACK_HEADER)
+	go build -o bin/ hyperpack/hyperpack.go
