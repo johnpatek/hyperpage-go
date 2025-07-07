@@ -21,7 +21,9 @@
 UNIT_TEST_HEADER        = "****************************** UNIT TEST *******************************"
 LINT_CHECK_HEADER       = "***************************** LINT CHECK *******************************"
 CODE_COVERAGE_HEADER    = "**************************** CODE COVERAGE *****************************"
-HYPERPACK_HEADER        = "****************************** HYPERPACK *******************************" 
+HYPERPACK_HEADER        = "****************************** HYPERPACK *******************************"
+EXAMPLE_HEADER          = "******************************* EXAMPLE ********************************"
+EXAMPLE_DB_HEADER       = "****************************** DATABASE ********************************"
 
 .PHONY: all
 all: lint test build
@@ -49,12 +51,24 @@ lint:
 
 .PHONY: clean
 clean:
-	rm -rf coverage.out
+	rm -rf coverage.out bin/hyperpack bin/example bin/hyperpage.db
 
 .PHONY: build
-build: hyperpack
+build: hyperpack example
 
 .PHONY: hyperpack
 hyperpack:
 	@echo $(HYPERPACK_HEADER)
 	go build -o bin/ hyperpack/hyperpack.go
+
+.PHONY: example
+example: exampledb
+	@echo $(EXAMPLE_HEADER)
+	go build -o bin/ _example/example.go
+
+.PHONY: exampledb
+exampledb:
+	@echo $(EXAMPLE_DB_HEADER)
+	@if [ ! -f bin/hyperpage.db ]; then \
+		./bin/hyperpack $(shell pwd)/_example/MeowMeow -o bin/hyperpage.db -v; \
+	fi
