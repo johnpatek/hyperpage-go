@@ -6,10 +6,11 @@ import (
 	"io"
 	"net/http"
 	"os"
-	"os/signal"
 	"path"
 	"path/filepath"
 	"syscall"
+
+	"github.com/maxtek6/sigfn-go"
 
 	"github.com/johnpatek/hyperpage-go"
 )
@@ -51,7 +52,6 @@ func (h *pageHandler) servePage(w http.ResponseWriter, path string) {
 		http.Error(w, "Page not found", http.StatusNotFound)
 		return
 	}
-	fmt.Println("Serving page:", page.Path())
 	w.Header().Set("Content-Type", page.MimeType())
 	_, _ = io.Copy(w, page.Content())
 }
@@ -71,16 +71,12 @@ func main() {
 		Handler: handler,
 	}
 
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
-	go func() {
-		sig := <-sigs
+	signalHandler := func(sig os.Signal) {
 		fmt.Println("Received signal:", sig)
-		if err := server.Shutdown(context.Background()); err != nil {
-			fmt.Printf("Error shutting down server: %v\n", err)
-		} else {
-			fmt.Println("Server shut down gracefully.")
-		}
-	}()
+		_ = server.Shutdown(context.Background())
+	}
+
+	sigfn.Handle(syscall.SIGINT, signalHandler)
 	_ = server.ListenAndServe()
+	fmt.Println("Server stopped gracefully")
 }
