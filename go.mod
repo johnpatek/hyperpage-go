@@ -5,8 +5,8 @@ go 1.24.4
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/spf13/pflag v1.0.7
-	github.com/stretchr/testify v1.10.0
-	modernc.org/sqlite v1.38.1
+	github.com/stretchr/testify v1.11.0
+	modernc.org/sqlite v1.38.2
 )
 
 require (
